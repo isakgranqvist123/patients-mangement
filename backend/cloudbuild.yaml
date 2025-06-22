@@ -1,0 +1,55 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'gcr.io/gothic-venture-373811/patients-management-docker-container',
+        '--build-arg',
+        'NODE_ENV=$_NODE_ENV',
+        '--build-arg',
+        'MONGO_URI=$_MONGO_URI',
+        '--build-arg',
+        'JWT_SECRET=$_JWT_SECRET',
+        '.',
+      ]
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'gcr.io/gothic-venture-373811/patients-management-docker-container',
+      ]
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run',
+        'deploy',
+        'patients-management',
+        '--allow-unauthenticated',
+        '--service-account',
+        '680698972592-compute@developer.gserviceaccount.com',
+        '--image',
+        'gcr.io/gothic-venture-373811/patients-management-docker-container',
+        '--region',
+        'europe-west1',
+        '--allow-unauthenticated',
+        '--max-instances',
+        '30',
+        '--min-instances',
+        '0',
+        '--memory',
+        '512Mi',
+        '--concurrency',
+        '80',
+      ]
+images:
+  - gcr.io/gothic-venture-373811/patients-management-docker-container
