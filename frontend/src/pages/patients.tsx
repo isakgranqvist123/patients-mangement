@@ -26,6 +26,7 @@ function PatientsTable(props: {
   return (
     <React.Fragment>
       <EditPatientDialog
+        key={selectedPatient?._id}
         patient={selectedPatient}
         open={open}
         onSuccess={() => {
