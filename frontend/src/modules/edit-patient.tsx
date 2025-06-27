@@ -23,8 +23,6 @@ import {
   DialogTitle,
 } from '../components/ui/dialog';
 
-console.log('Trigger deployment');
-
 const editPatientSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
